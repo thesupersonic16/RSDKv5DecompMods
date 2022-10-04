@@ -1,11 +1,21 @@
 #define _CRT_SECURE_NO_WARNINGS
+#include "Hook.hpp"
+#include "framework.h"
 #include <Game.hpp>
 #include <steam_api.h>
-#include "Hook.hpp"
+#include <subhook.h>
+
+#if RETRO_USE_MOD_LOADER
+extern "C" {
+DLLExport bool32 LinkModLogic(RSDK::EngineInfo* info, const char* id);
+DLLExport void UnloadMod();
+}
+#endif
 
 #define ADD_PUBLIC_FUNC(func) Mod.AddPublicFunction(#func, (void *)(func))
 
-ManiaGlobalVariables* maniaGlobals = nullptr;
+ManiaGlobalVariables* maniaGlobals
+    = nullptr;
 
 static bool EnableAchievements = false;
 
@@ -22,7 +32,7 @@ void SteamCallbacks::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 
 SteamCallbacks* callbacks;
 
-Func<bool32, int32>* ShowExtensionOverlay;
+Hook<bool32, int32> ShowExtensionOverlay;
 bool32 ShowExtensionOverlay_r(int32 overlay)
 {
     switch (overlay)
@@ -31,12 +41,12 @@ bool32 ShowExtensionOverlay_r(int32 overlay)
         SteamFriends()->ActivateGameOverlayToWebPage("https://store.steampowered.com/app/845640/Sonic_Mania__Encore_DLC/");
         return true;
     default:
-        MessageBoxA(NULL, "Unknown Overlay ID!\n\nPlease report this issue!", "RSDKv5SteamAPI Error", MB_ICONERROR);
+        errorMessage("Unknown Overlay ID!\n\nPlease report this issue!", "RSDKv5SteamAPI Error");
         return false;
     }
 }
 
-Func<bool32, RSDK::String*>* GetUsername;
+Hook<bool32, RSDK::String*> GetUsername;
 bool32 GetUsername_r(RSDK::String* userName)
 {
     const char* name = SteamFriends()->GetPersonaName();
@@ -45,11 +55,11 @@ bool32 GetUsername_r(RSDK::String* userName)
         RSDK::String::Copy(userName, name);
         return true;
     }
-    return GetUsername->Original(userName);
+    return GetUsername.Original(userName);
 }
 
-Func<bool32, RSDK::AchievementID*>* TryUnlockAchievement;
-bool32 TryUnlockAchievement_r(RSDK::AchievementID* id)
+Hook<void, RSDK::AchievementID*> TryUnlockAchievement;
+void TryUnlockAchievement_r(RSDK::AchievementID* id)
 {
     // Unlock the achievement and save
     if (EnableAchievements && RSDK::APITable->GetAchievementsEnabled())
@@ -57,11 +67,11 @@ bool32 TryUnlockAchievement_r(RSDK::AchievementID* id)
         SteamUserStats()->SetAchievement(id->id);
         SteamUserStats()->StoreStats();
     }
-    return TryUnlockAchievement->Original(id);
+    TryUnlockAchievement.Original(id);
 }
 
-Func<bool32, bool32>* CheckDLC;
-bool32 CheckDLC_r(bool32 dlc)
+Hook<bool32, int32> CheckDLC;
+bool32 CheckDLC_r(int32 dlc)
 {
     // NOTE: Not sure why this does not work with the overlay disabled.
     /*
@@ -77,17 +87,17 @@ bool32 CheckDLC_r(bool32 dlc)
     case 0:
         return SteamApps()->BIsDlcInstalled(845640);
     default:
-        return CheckDLC->Original(dlc);
+        return CheckDLC.Original(dlc);
     }
 }
 
-Func<bool32, int32, RSDK::String*>* SetRichPresence;
-bool32 SetRichPresence_r(int32 id, RSDK::String* text)
+Hook<void, int32, RSDK::String*> SetRichPresence;
+void SetRichPresence_r(int32 id, RSDK::String* text)
 {
     char cText[k_cchMaxRichPresenceValueLength];
     text->CStr(cText);
     SteamFriends()->SetRichPresence("status", cText);
-    return SetRichPresence->Original(id, text);
+    SetRichPresence.Original(id, text);
 }
 
 void OnUpdate(void* data)
@@ -95,7 +105,9 @@ void OnUpdate(void* data)
     SteamAPI_RunCallbacks();
 }
 
-extern "C" __declspec(dllexport) bool32 LinkModLogic(RSDK::EngineInfo * info, const char* id)
+#define INSTALL_HOOK(hook) hook.Install(RSDK::APITable->hook, hook##_r);
+
+bool32 LinkModLogic(RSDK::EngineInfo* info, const char* id)
 {
 #if !RETRO_REV01
     LinkGameLogicDLL(info);
@@ -105,26 +117,20 @@ extern "C" __declspec(dllexport) bool32 LinkModLogic(RSDK::EngineInfo * info, co
 
     if (!SteamAPI_Init())
     {
-        MessageBoxA(NULL, "Failed to initialise the Steam API", "SteamAPI Error", MB_ICONERROR);
+        errorMessage("Failed to initialise the Steam API", "SteamAPI Error");
     }
     else
     {
-        ShowExtensionOverlay = new Func<bool32, int32>(RSDK::APITable->ShowExtensionOverlay);
-        ShowExtensionOverlay->Hook(ShowExtensionOverlay_r);
-        GetUsername = new Func<bool32, RSDK::String*>(RSDK::APITable->GetUsername);
-        GetUsername->Hook(GetUsername_r);
-        TryUnlockAchievement = new Func<bool32, RSDK::AchievementID*>(RSDK::APITable->TryUnlockAchievement);
-        TryUnlockAchievement->Hook(TryUnlockAchievement_r);
-        SetRichPresence = new Func<bool32, int32, RSDK::String*>(RSDK::APITable->SetRichPresence);
-        SetRichPresence->Hook(SetRichPresence_r);
-        CheckDLC = new Func<bool32, bool32>(RSDK::APITable->CheckDLC);
-        CheckDLC->Hook(CheckDLC_r);
+        INSTALL_HOOK(ShowExtensionOverlay)
+        INSTALL_HOOK(GetUsername)
+        INSTALL_HOOK(TryUnlockAchievement)
+        INSTALL_HOOK(SetRichPresence)
+        INSTALL_HOOK(CheckDLC)
 
-        if (!SteamUserStats()->RequestCurrentStats())
-        {
-            MessageBoxA(NULL, "Failed to request stats!\n\nAchievements will be disabled.", "SteamAPI Error", MB_ICONERROR);
+        if (!SteamUserStats()->RequestCurrentStats()) {
+            errorMessage("Failed to request stats!\n\nAchievements will be disabled.", "SteamAPI Error");
         }
-        
+
         callbacks = new SteamCallbacks();
         RSDK::Mod::AddModCallback(RSDK::MODCB_ONUPDATE, OnUpdate);
     }
@@ -134,20 +140,13 @@ extern "C" __declspec(dllexport) bool32 LinkModLogic(RSDK::EngineInfo * info, co
     return true;
 }
 
-#define UNLOAD_HOOK(hook) \
-    if (hook) \
-    { \
-        hook->Unhook(); \
-        delete hook; \
-    }
-
-extern "C" __declspec(dllexport) void UnloadMod()
+void UnloadMod()
 {
-    UNLOAD_HOOK(ShowExtensionOverlay);
-    UNLOAD_HOOK(GetUsername);
-    UNLOAD_HOOK(TryUnlockAchievement);
-    UNLOAD_HOOK(SetRichPresence);
-    UNLOAD_HOOK(CheckDLC);
+    ShowExtensionOverlay.Remove();
+    GetUsername.Remove();
+    TryUnlockAchievement.Remove();
+    SetRichPresence.Remove();
+    CheckDLC.Remove();
 
     SteamAPI_Shutdown();
     delete callbacks;
