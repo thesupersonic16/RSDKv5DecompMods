@@ -11,6 +11,8 @@ public:
     Hook() : hook() {}
 
     void Install(FunctionType original, FunctionType hooked) {
+        this->pointer = original;
+        
         if (!hook.Install((void*)original, (void*)hooked, subhook::HookFlag64BitOffset)) {
             throw new std::runtime_error("Failed to hook function");
         }
@@ -20,10 +22,9 @@ public:
     }
 
     TRet Original(TArgs... args) {
-        if (this->hook.IsInstalled())
-            return ((FunctionType)this->hook.GetTrampoline())(args...);
-        else
-            return this->pointer(args...);
+        subhook::ScopedHookRemove remove(&this->hook);
+        
+        return this->pointer(args...);
     }
 
     TRet operator()(TArgs... args)
