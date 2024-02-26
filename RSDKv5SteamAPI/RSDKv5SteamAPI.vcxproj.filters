@@ -18,18 +18,30 @@
     <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Hook.hpp">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="include\detours.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Helpers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mod.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Steam.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\GameAPI\CPP\GameAPI\Game.cpp">
+    <ClCompile Include="Mod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mod.cpp">
+    <ClCompile Include="..\GameAPI\C\GameAPI\Game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Steam.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
