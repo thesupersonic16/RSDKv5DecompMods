@@ -74,7 +74,7 @@ void OptionsMenu_State_Menu(void)
         RSDK.PlaySfx(OptionsMenu->sfxBleep, 0, 0);
         S3kGlobals->playMode = !S3kGlobals->playMode;
 
-        if (S3kGlobals->playMode == 1)
+        if (S3kGlobals->playMode & 1)
         {
             S3kGlobals->disableLives = true;
             S3kGlobals->useCoins = true;
@@ -90,25 +90,16 @@ void OptionsMenu_State_Menu(void)
     if (controller->keyZ.press)
     {
         RSDK.PlaySfx(OptionsMenu->sfxBleep, 0, 0);
-        S3kGlobals->unknown4C34D8 = !S3kGlobals->unknown4C34D8;
+        S3kGlobals->unknown4C34D8 ^= 1;
+
         if (S3kGlobals->unknown4C34D8)
-        {
             S3kGlobals->playMode = 3;
-        }
         else
-        {
             S3kGlobals->playMode = 1;
-        }
 
-        updateSaveSlots = true;
-    }
-
-    // Enable Anniversary if Mirror Mode is on while on Classic
-    if (S3kGlobals->unknown4C34D8 && S3kGlobals->playMode == 0)
-    {
-        S3kGlobals->playMode = 3;
         S3kGlobals->disableLives = true;
         S3kGlobals->useCoins = true;
+
         updateSaveSlots = true;
     }
 
