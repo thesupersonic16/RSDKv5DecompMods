@@ -38,13 +38,13 @@ void OptionsMenu_Draw(void)
     pos.y = 0;
 
     // Icons
-    RSDK.SetSpriteAnimation(OptionsMenu->ani, 0, &self->animator, true, S3kGlobals->playMode == 1);
+    RSDK.SetSpriteAnimation(OptionsMenu->ani, 0, &self->animator, true, S3kGlobals->playMode != 0);
     RSDK.DrawSprite(&self->animator, &pos, true);
     RSDK.SetSpriteAnimation(OptionsMenu->ani, 0, &self->animator, true, (S3kGlobals->unknown4C34D8 == 0) + 2);
     RSDK.DrawSprite(&self->animator, &pos, true);
 
     // Options
-    RSDK.SetSpriteAnimation(OptionsMenu->ani, 2, &self->animator, true, S3kGlobals->playMode == 1);
+    RSDK.SetSpriteAnimation(OptionsMenu->ani, 2, &self->animator, true, S3kGlobals->playMode != 0);
     RSDK.DrawSprite(&self->animator, &pos, true);
     RSDK.SetSpriteAnimation(OptionsMenu->ani, 2, &self->animator, true, (S3kGlobals->unknown4C34D8 == 0) + 2);
     RSDK.DrawSprite(&self->animator, &pos, true);
