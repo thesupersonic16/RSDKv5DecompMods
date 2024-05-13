@@ -1,7 +1,7 @@
 #include "Objects/OptionsMenu.h"
 #include "framework.h"
 
-#define S3K_SaveMenu_State_Init ((Type_StateMachine)(0x140305640))
+StateMachine(S3K_SaveMenu_State_Init);
 
 int32 UltrafixDetected = -1;
 
@@ -30,6 +30,9 @@ bool32 OptionsMenu_State_CreateHook(bool32 skippedState, Entity* entity)
 
 void InitModAPI(void)
 {
+    S3K_SaveSlot_Create = Mod.GetPublicFunction(NULL, "S3K_SaveSlot::Create");
+    S3K_SaveMenu_State_Init = Mod.GetPublicFunction(NULL, "S3K_SaveMenu::State_Init");
+
     Mod.RegisterStateHook(S3K_SaveMenu_State_Init, OptionsMenu_State_CreateHook, 0);
     MOD_REGISTER_OBJECT(OptionsMenu, "OptionsMenu", OptionsMenu_Update, nullfunc, nullfunc, OptionsMenu_Draw, OptionsMenu_Create, OptionsMenu_StageLoad, nullfunc, nullfunc, nullfunc);
 }

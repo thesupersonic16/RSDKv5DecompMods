@@ -1,9 +1,7 @@
 #include "OptionsMenu.h"
 
-#define S3K_SaveSlot_Create ((Type_StateMachine)(0x1403065D0))
-#define ObjS3K_SaveSlot (0x143FB9FB8)
-
 ObjectOptionsMenu* OptionsMenu;
+StateMachine(S3K_SaveSlot_Create);
 
 void OptionsMenu_Create(void* data)
 {
@@ -107,7 +105,7 @@ void OptionsMenu_State_Menu(void)
     {
         Entity* saveSlot = NULL;                    
 
-        while (RSDK.GetAllEntities((*(Object**)ObjS3K_SaveSlot)->classID, (void**)&saveSlot))
+        while (RSDK.GetAllEntities(RSDK.FindObject("S3K_SaveSlot"), (void**)&saveSlot))
         {
             StateMachine_Run2(S3K_SaveSlot_Create, saveSlot);
         }

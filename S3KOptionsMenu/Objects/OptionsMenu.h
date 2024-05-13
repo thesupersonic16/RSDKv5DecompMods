@@ -18,6 +18,7 @@ typedef struct {
 
 // Object Struct
 extern ObjectOptionsMenu* OptionsMenu;
+extern StateMachine(S3K_SaveSlot_Create);
 
 void OptionsMenu_Create(void* data);
 void OptionsMenu_Update(void);
