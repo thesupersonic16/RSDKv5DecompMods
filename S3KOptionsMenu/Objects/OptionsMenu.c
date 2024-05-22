@@ -31,27 +31,69 @@ void OptionsMenu_Draw(void)
     RSDK_THIS(OptionsMenu);
     GlobalS3KVariables* S3kGlobals = (GlobalS3KVariables*)Mod.GetGlobals();
 
-    Vector2 pos;
-    pos.x = 0;
-    pos.y = 0;
+    bool32 isSmall = ScreenInfo->size.x < 330;
 
-    // Icons
+    Vector2 posGameIcon;
+    Vector2 posGameHeader;
+    Vector2 posGameOption;
+
+    Vector2 posMirrorIcon;
+    Vector2 posMirrorHeader;
+    Vector2 posMirrorOption;
+
+    if (isSmall)
+    {
+        posGameIcon.x = TO_FIXED(8);
+        posGameIcon.y = TO_FIXED(ScreenInfo->size.y - 40);
+        posGameHeader.x = TO_FIXED(8);
+        posGameHeader.y = TO_FIXED(ScreenInfo->size.y - 23);
+        posGameOption.x = TO_FIXED(8);
+        posGameOption.y = TO_FIXED(ScreenInfo->size.y - 15);
+
+        posMirrorIcon.x = TO_FIXED(ScreenInfo->size.x - 24);
+        posMirrorIcon.y = TO_FIXED(ScreenInfo->size.y - 40);
+        posMirrorHeader.x = TO_FIXED(ScreenInfo->size.x - 96);
+        posMirrorHeader.y = TO_FIXED(ScreenInfo->size.y - 23);
+        posMirrorOption.x = TO_FIXED(ScreenInfo->size.x - 8);
+        posMirrorOption.y = TO_FIXED(ScreenInfo->size.y - 15);
+    }
+    else
+    {
+        posGameIcon.x = TO_FIXED(8);
+        posGameIcon.y = TO_FIXED(ScreenInfo->size.y - 24);
+        posGameHeader.x = TO_FIXED(25);
+        posGameHeader.y = TO_FIXED(ScreenInfo->size.y - 23);
+        posGameOption.x = TO_FIXED(25);
+        posGameOption.y = TO_FIXED(ScreenInfo->size.y - 15);
+
+        posMirrorIcon.x = TO_FIXED(ScreenInfo->size.x - 24);
+        posMirrorIcon.y = TO_FIXED(ScreenInfo->size.y - 24);
+        posMirrorHeader.x = TO_FIXED(ScreenInfo->size.x - 113);
+        posMirrorHeader.y = TO_FIXED(ScreenInfo->size.y - 23);
+        posMirrorOption.x = TO_FIXED(ScreenInfo->size.x - 25);
+        posMirrorOption.y = TO_FIXED(ScreenInfo->size.y - 15);
+    }
+
+    // Game Mode Icon
     RSDK.SetSpriteAnimation(OptionsMenu->ani, 0, &self->animator, true, S3kGlobals->playMode != 0);
-    RSDK.DrawSprite(&self->animator, &pos, true);
-    RSDK.SetSpriteAnimation(OptionsMenu->ani, 0, &self->animator, true, (S3kGlobals->unknown4C34D8 == 0) + 2);
-    RSDK.DrawSprite(&self->animator, &pos, true);
-
-    // Options
-    RSDK.SetSpriteAnimation(OptionsMenu->ani, 2, &self->animator, true, S3kGlobals->playMode != 0);
-    RSDK.DrawSprite(&self->animator, &pos, true);
-    RSDK.SetSpriteAnimation(OptionsMenu->ani, 2, &self->animator, true, (S3kGlobals->unknown4C34D8 == 0) + 2);
-    RSDK.DrawSprite(&self->animator, &pos, true);
-
-    // Modes
+    RSDK.DrawSprite(&self->animator, &posGameIcon, true);
+    // Game Mode Header
     RSDK.SetSpriteAnimation(OptionsMenu->ani, 1, &self->animator, true, 0);
-    RSDK.DrawSprite(&self->animator, &pos, true);
+    RSDK.DrawSprite(&self->animator, &posGameHeader, true);
+    // Game Mode Option
+    RSDK.SetSpriteAnimation(OptionsMenu->ani, 2, &self->animator, true, S3kGlobals->playMode != 0);
+    RSDK.DrawSprite(&self->animator, &posGameOption, true);
+
+    // Mirror Mode icon
+    RSDK.SetSpriteAnimation(OptionsMenu->ani, 0, &self->animator, true, (S3kGlobals->unknown4C34D8 == 0) + 2);
+    RSDK.DrawSprite(&self->animator, &posMirrorIcon, true);
+    // Mirror Mode Header
     RSDK.SetSpriteAnimation(OptionsMenu->ani, 1, &self->animator, true, 1);
-    RSDK.DrawSprite(&self->animator, &pos, true);
+    RSDK.DrawSprite(&self->animator, &posMirrorHeader, true);
+    // Mirror Mode Option
+    RSDK.SetSpriteAnimation(OptionsMenu->ani, 2, &self->animator, true, (S3kGlobals->unknown4C34D8 == 0) + 2);
+    RSDK.DrawSprite(&self->animator, &posMirrorOption, true);
+
 }
 
 void OptionsMenu_StageLoad(void)
