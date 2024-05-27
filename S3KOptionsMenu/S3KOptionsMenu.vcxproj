@@ -298,12 +298,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Helpers.h" />
     <ClInclude Include="Objects\OptionsMenu.h" />
     <ClInclude Include="S3K.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\GameAPI\C\GameAPI\Game.c" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Helpers.c" />
     <ClCompile Include="Mod.c" />
     <ClCompile Include="Objects\OptionsMenu.c" />
   </ItemGroup>

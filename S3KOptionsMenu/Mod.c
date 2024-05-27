@@ -34,7 +34,7 @@ void InitModAPI(void)
     S3K_SaveMenu_State_Init = Mod.GetPublicFunction(NULL, "S3K_SaveMenu::State_Init");
 
     Mod.RegisterStateHook(S3K_SaveMenu_State_Init, OptionsMenu_State_CreateHook, 0);
-    MOD_REGISTER_OBJECT(OptionsMenu, "OptionsMenu", OptionsMenu_Update, nullfunc, nullfunc, OptionsMenu_Draw, OptionsMenu_Create, OptionsMenu_StageLoad, nullfunc, nullfunc, nullfunc);
+    MOD_REGISTER_OBJECT(OptionsMenu, "OptionsMenu", OptionsMenu_Update, OptionsMenu_LateUpdate, nullfunc, OptionsMenu_Draw, OptionsMenu_Create, OptionsMenu_StageLoad, nullfunc, nullfunc, nullfunc);
 }
 
 DLLExport bool32 LinkModLogic(EngineInfo* info, const char* id)
