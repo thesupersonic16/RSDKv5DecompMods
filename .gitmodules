@@ -1,3 +1,6 @@
 [submodule "GameAPI"]
 	path = GameAPI
 	url = https://github.com/thesupersonic16/GameAPI
+[submodule "RSDKv5-GameAPI"]
+	path = RSDKv5-GameAPI
+	url = https://github.com/RSDKModding/RSDKv5-GameAPI
