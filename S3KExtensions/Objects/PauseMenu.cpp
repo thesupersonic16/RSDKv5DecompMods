@@ -18,7 +18,8 @@ void PauseMenu::Create(void *data) {
     if (sceneInfo->inEditor)
         return;
 
-    this->inSpecialStage = (sceneInfo->activeCategory == 4 || sceneInfo->activeCategory == 5);
+    this->inSpecialStage = (sceneInfo->activeCategory == 4 || sceneInfo->activeCategory == 5)
+        && globals->playMode != BOOT_PLAYMODE_MISSION;
 
     this->active = ACTIVE_ALWAYS;
     this->visible = true;
@@ -67,6 +68,10 @@ void PauseMenu::Update(void) {
     if (sceneInfo->inEditor)
         return;
 
+    // Open debug menu
+    if (config.debugMenuEnable && controllerInfo[0].keyC.press)
+        this->Reset(DebugMenu::sVars->classID, NULL);
+
     this->state.Run(this);
     this->timer++;
 }
@@ -101,6 +106,8 @@ void PauseMenu::StageLoad(void) {
 
     modSVars->selectionAniDuration = 60;
     modSVars->selectionAniDelay = 24;
+
+    sVars->disableEvents = false;
 }
 
 void PauseMenu::StopMusic(void)
@@ -248,9 +255,13 @@ void PauseMenu::State_Resuming(void)
 
 void PauseMenu::State_Restarting(void)
 {
-    if (this->fadeCompleted)
-    {
-        Stage::SetEngineState(ENGINESTATE_LOAD);
+    if (this->fadeCompleted) {
+
+        // Restart mission
+        if (globals->playMode == BOOT_PLAYMODE_MISSION && modGlobals->missionData)
+            modGlobals->startMission = true;
+
+        Stage::LoadScene();
         this->StopMusic();
         this->Destroy();
     }
@@ -261,7 +272,7 @@ void PauseMenu::State_ReturningToTitle(void)
     if (this->fadeCompleted)
     {
         Stage::SetScene("Presentation & Menus", "Title Screen");
-        Stage::SetEngineState(ENGINESTATE_LOAD);
+        Stage::LoadScene();
         this->StopMusic();
         this->Destroy();
     }
@@ -272,7 +283,7 @@ void PauseMenu::State_EnteringLevelSelect(void)
     if (this->fadeCompleted)
     {
         Stage::SetScene("Presentation & Menus", "Level Select");
-        Stage::SetEngineState(ENGINESTATE_LOAD);
+        Stage::LoadScene();
         this->StopMusic();
         this->Destroy();
     }

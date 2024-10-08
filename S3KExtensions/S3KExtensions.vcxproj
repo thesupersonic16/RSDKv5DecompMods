@@ -85,21 +85,35 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="$(SolutionDir)RSDKv5-GameAPI\CPP\GameAPI\Game.cpp" />
-    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Helpers.cpp" />
+    <ClCompile Include="Callbacks.cpp" />
+    <ClCompile Include="MissionInfo.cpp" />
+    <ClCompile Include="Objects\DebugMenu.cpp" />
+    <ClCompile Include="Objects\DrawHelpers.cpp" />
+    <ClCompile Include="Objects\HUD.cpp" />
+    <ClCompile Include="Objects\Mission.cpp" />
     <ClCompile Include="Objects\OptionsMenu.cpp" />
     <ClCompile Include="Objects\PauseMenu.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
     <ClCompile Include="Objects\S3K_SaveMenu.cpp" />
     <ClCompile Include="Objects\S3K_SaveSlot.cpp" />
     <ClCompile Include="Objects\S3K_SS_Player.cpp" />
+    <ClCompile Include="Objects\SignPost2.cpp" />
     <ClCompile Include="S3KExtensions.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DevFont.hpp" />
     <ClInclude Include="Helpers.hpp" />
+    <ClInclude Include="Callbacks.hpp" />
+    <ClInclude Include="MissionInfo.hpp" />
+    <ClInclude Include="Objects\DebugMenu.hpp" />
+    <ClInclude Include="Objects\DrawHelpers.hpp" />
+    <ClInclude Include="Objects\HUD.hpp" />
+    <ClInclude Include="Objects\Mission.hpp" />
     <ClInclude Include="Objects\PauseMenu.hpp" />
     <ClInclude Include="Objects\Player.hpp" />
     <ClInclude Include="Objects\S3K_SS_Player.hpp" />
+    <ClInclude Include="Objects\SignPost2.hpp" />
     <ClInclude Include="S3KExtensions.hpp" />
     <ClCompile Include="Objects\OptionsMenu.hpp" />
     <ClCompile Include="Objects\S3K_SaveMenu.hpp" />

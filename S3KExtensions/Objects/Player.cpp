@@ -4,28 +4,32 @@ using namespace RSDK;
 
 namespace GameLogic {
 
-// -------------
-// Object States
-// -------------
+    // -------------
+    // Object States
+    // -------------
 
-StateMachine<Player> Player::Input_Gamepad;
+    StateMachine<Player> Player::Input_Gamepad;
 
-// ----------------------
-// Extra Entity Functions
-// ----------------------
+    // ----------------------
+    // Extra Entity Functions
+    // ----------------------
 
-bool32 Player::Input_Gamepad_Hook(bool32 skippedState)
-{
-    if (sceneInfo->state == ENGINESTATE_REGULAR
-        && controllerInfo[0].keyStart.press
-        && !PauseMenu::sVars->disableEvents
-        && GameObject::Get(SLOT_PLAYER1)->classID != 0
-        && GameObject::Get(SLOT_ACTCLEAR)->classID == 0
-        && GameObject::Get(SLOT_PAUSEMENU)->classID == 0)
-    {
-        GameObject::Reset(SLOT_PAUSEMENU, PauseMenu::sVars->classID, NULL);
+    bool32 Player::Input_Gamepad_Hook(bool32 skippedState) {
+        if (sceneInfo->state == ENGINESTATE_REGULAR
+            && controllerInfo[0].keyStart.press
+            && !PauseMenu::sVars->disableEvents
+            && GameObject::Get(SLOT_PLAYER1)->classID != 0
+            && GameObject::Get(SLOT_ACTCLEAR)->classID == 0
+            && GameObject::Get(SLOT_PAUSEMENU)->classID == 0) {
+            GameObject::Reset(SLOT_PAUSEMENU, PauseMenu::sVars->classID, NULL);
+        }
+        return false;
     }
-    return false;
-}
+
+    // -------------------
+    // Object Registration
+    // -------------------
+
+    MOD_REGISTER_OBJECT(Player);
 
 } // namespace GameLogic

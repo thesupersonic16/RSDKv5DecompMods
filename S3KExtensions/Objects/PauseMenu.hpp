@@ -59,9 +59,9 @@ struct PauseMenu : GameObject::Entity {
     // Extra Entity Functions
     // ----------------------
 
-    void StopMusic(void);
-    void PauseMusic(void);
-    void ResumeMusic(void);
+    static void StopMusic(void);
+    static void PauseMusic(void);
+    static void ResumeMusic(void);
 
 
     // -------------

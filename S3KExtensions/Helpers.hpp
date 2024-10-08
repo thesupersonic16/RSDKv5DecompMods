@@ -3,6 +3,13 @@ namespace Helpers {
     bool32 CheckTouch(int32 x, int32 y, int32 w, int32 h);
     
     template <typename T>
+    T* FindFirstEntity() {
+        for (auto entity : RSDK::GameObject::GetEntities<T>(RSDK::FOR_ALL_ENTITIES))
+            return entity;
+        return nullptr;
+    }
+
+    template <typename T>
     void (T::*ToMember(void *ptr))() {
         union FuncUnion {
             void* in;
